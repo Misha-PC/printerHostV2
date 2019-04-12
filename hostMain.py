@@ -16,8 +16,10 @@ class host(object):
         self.cTempE     =    0
 
     def __del__(self):
-            print('destroy class')
-
+            if self.connected:
+                A.executeGCode("M104 S0\n")
+                A.disconect()
+            print('class destroed success!')
     def printObject(self, gcode):
         print("PREREAR TO PRINTING..................")
         if not self.connected:
@@ -156,8 +158,6 @@ if __name__ == '__main__':
 
         if arg_ == "-e" or arg_ == "--exit":
             print("exit....")
-            A.executeGCode("M104 S0\n")
-            A.disconect()
             # A.__del__()
             A = None
             break
@@ -181,5 +181,4 @@ if __name__ == '__main__':
             A.executeGCode(arg_.replace("-g ", "")+"\n")
 
         arg_ = input()
-    print(".... exit!")
-    
+    print("success finish!")
