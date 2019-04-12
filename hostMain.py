@@ -20,6 +20,7 @@ class host(object):
                 A.executeGCode("M104 S0\n")
                 A.disconect()
             print('class destroed success!')
+
     def printObject(self, gcode):
         print("PREREAR TO PRINTING..................")
         if not self.connected:
@@ -68,10 +69,15 @@ class host(object):
         self.readActiv.set()
 
     def disconect(self):
-        self.printer = serial.Serial()
-        self.stopRead()
-        self.conected = False
-        print("DISCONECTED!!")
+        if self.connected:
+            self.printer = serial.Serial()
+            self.stopRead()
+            self.connected = False
+            print("DISCONECTED!!")
+            return(0)
+        print("was not connected.")
+        return(-1)
+
 
     def passiveRead(self, arg):
         if self.detectPort() == -1:
@@ -130,7 +136,7 @@ class host(object):
 
     def getTemp(self):
         if not(self.connected):
-            print("execute GCode error. Connect failed")
+            print("ERROR: printer not connected")
             return(-1)
         print("getTemp")
         self.printer.write(b'M105\n')
@@ -153,6 +159,7 @@ class host(object):
 
 if __name__ == '__main__':
     A = host()
+    A.__init__()
     arg_ = '-h'
     while arg_ != "-e" or  arg_ != "--exit" :
 
