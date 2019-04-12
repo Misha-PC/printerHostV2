@@ -127,6 +127,9 @@ class host(object):
         return(-1)
 
     def getTemp(self):
+        if not(self.connected):
+            print("execute GCode error. Connect failed")
+            return(-1)
         print("getTemp")
         self.printer.write(b'M105\n')
         while not("T:" in str(self.lastMsg)):
@@ -155,7 +158,8 @@ if __name__ == '__main__':
             print("exit....")
             A.executeGCode("M104 S0\n")
             A.disconect()
-            A.__del__()
+            # A.__del__()
+            A = None
             break
         if arg_ == "-c" or arg_ == "--connect":
             A.connect()
@@ -178,4 +182,4 @@ if __name__ == '__main__':
 
         arg_ = input()
     print(".... exit!")
-    A.getData()
+    
