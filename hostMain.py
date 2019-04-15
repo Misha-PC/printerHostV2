@@ -1,3 +1,4 @@
+ # -*- coding: utf-8 -*-
 import serial, time, os, sched, threading, function
 
 
@@ -35,7 +36,7 @@ class host(object):
         for i in gcode:
             while " \n" in i:
                 i = i.replace(" \n", "\n")
-            while not("ok" in x_):
+            while not(("ok" in x_)or("k\n" in x_)or("o\n" in x_)):
                 try:
                     time.sleep(0.002)
                     x_ = str(self.printer.readline())
@@ -59,6 +60,11 @@ class host(object):
         print("printFile...")
         self.printObject(function.parsGCode(fileName, 'file'))
 
+    def sliceFile(self, fileName):
+        com = function.makeSlicerCommand(fileName)
+        os.system(com)
+        print(com)
+        
     def startRead(self):
         print("startRead")
         self.readActiv = threading.Event()
@@ -184,8 +190,17 @@ if __name__ == '__main__':
             print("usage '-g <Gcode [arg]..>'  to send gCode")
 
         elif "-g" in arg_:
-
             A.executeGCode(arg_.replace("-g ", "")+"\n")
+        elif "-p" in arg_:
+            fName = arg_.replace("-p ", "")
+            print(fName)
+            A.sliceFile(fName + ".stl")
+            while True:
+                try:
+                    A.printFile(fName + ".gcode")
+                    break
+                except Exception as e:
+                    time.sleep(1)
 
         arg_ = input()
     print("success finish!")
